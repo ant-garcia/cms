@@ -1,0 +1,1 @@
+{"name":"Clerical","empList":[{"id":1,"status":"full-time","dateStarted":"Jul 29, 2016 9:40:28 PM","department":"Clerical"},{"id":2,"status":"part-time","dateStarted":"Jul 29, 2016 9:40:39 PM","department":"Clerical"}]}{"name":"Administration","empList":[{"id":3,"status":"perdiem","dateStarted":"Jul 29, 2016 9:41:58 PM","department":"Administration"}]}
