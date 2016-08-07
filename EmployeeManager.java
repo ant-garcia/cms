@@ -1,6 +1,8 @@
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class EmployeeManager
 {
@@ -96,13 +98,6 @@ public class EmployeeManager
 		System.out.println("Creating new Department for Employee");
 		createDept(e.getDepartment());
 		this.deptList.addEmp(e);
-		/*if(!e.getDepartment().equalsIgnoreCase(deptList.getName()))
-		{
-			System.out.println("ERROR: This employee does not work in this department!");
-			return;
-		}
-		System.out.println("ID: " + e.getId());
-		this.deptList.addEmp(e);*/
 	}
 
 	public void delEmp(Employee e)
@@ -115,14 +110,6 @@ public class EmployeeManager
 				return;
 			}
 		}
-
-		/*if(!e.getDepartment().equalsIgnoreCase(deptList.getName()))
-		{
-			System.out.println("ERROR: This employee does not work in this department!");
-			return;
-		}
-
-		this.deptList.delEmp(e);*/
 	}
 
 	public void delEmp(int i)
@@ -143,7 +130,30 @@ public class EmployeeManager
 	{
 		for(DeptList l : dLists)
 			if(l.containsEmp(i))
+			{
 				l.getEmp(i).setLastPunchOut(new Date().toString());
+				updateEmpHrsWorked(l.getEmp(i));
+				updateEmpTimeOff(l.getEmp(i));
+			}
+	}
+
+	private void updateEmpTimeOff(Employee e)
+	{
+		e.setTimeOff(e.getTimeOff() + (e.getHoursWorked() / 24));
+	}
+
+	private void updateEmpHrsWorked(Employee e)
+	{
+		try
+		{
+			Date ds = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(e.getLastPunchIn());
+			Date de = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(e.getLastPunchOut());
+			double diff = (de.getTime() - ds.getTime()) / (3600 * 1000);
+			e.setHoursWorked(e.getHoursWorked() + diff);
+		}catch (ParseException pe) 
+		{
+			System.out.println("ERROR: The dates were not able to be parsed!");
+		}
 	}
 
 	public void checkAllDeptStatus()	

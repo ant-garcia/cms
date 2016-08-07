@@ -8,7 +8,12 @@ public class TicketManager
 
 	public TicketManager()
 	{
-		tMap = new HashMap<String, ArrayList<Ticket>>();
+		this.tMap = new HashMap<String, ArrayList<Ticket>>();
+	}
+
+	public TicketManager(HashMap<String, ArrayList<Ticket>> m)
+	{
+		this.tMap = m;
 	}
 
 	public boolean isEmpty()
@@ -19,6 +24,11 @@ public class TicketManager
 	public HashMap<String, ArrayList<Ticket>> getAllTickets()
 	{
 		return this.tMap;
+	}
+
+	public void setAllTickets(HashMap<String, ArrayList<Ticket>> m)
+	{
+		this.tMap = m;
 	}
 
 	private boolean containsDept(String d)
@@ -97,10 +107,13 @@ public class TicketManager
 	{
 		for(ArrayList<Ticket> l : this.tMap.values())
 		{
-			System.out.println("\nNAME: " + l.get(0).getDept() + "\n# OF TICKETS: " + l.size());
-			for(Ticket t : l)
-				if(t.getStatus())
-					System.out.println(t.toString());
+			//if(hasOpenTickets(l.get(0).getDept()))
+			//{
+				System.out.println("\nNAME: " + l.get(0).getDept() + "\n# OF TICKETS: " + getNumOfOpenDeptTickets(l));
+				for(Ticket t : l)
+					if(t.getStatus())
+						System.out.println(t.toString());	
+			//}
 		}	
 	}
 
@@ -108,10 +121,13 @@ public class TicketManager
 	{
 		for(ArrayList<Ticket> l : this.tMap.values())
 		{
-			System.out.println("\nNAME: " + l.get(0).getDept() + "\n# OF TICKETS: " + l.size());
-			for(Ticket t : l)
-				if(!t.getStatus())
-					System.out.println(t.toString());
+			//if(!hasOpenTickets(l.get(0).getDept()))
+			//{
+			//	System.out.println("\nNAME: " + l.get(0).getDept() + "\n# OF TICKETS: " + getNumOfClosedDeptTickets(l));
+				for(Ticket t : l)
+					if(!t.getStatus())
+						System.out.println(t.toString());	
+			//}
 		}	
 	}
 
@@ -158,5 +174,23 @@ public class TicketManager
 		for(Ticket t : this.tMap.get(n))
 			if(!t.getStatus())
 				System.out.println(t.toString());
+	}
+
+	private int getNumOfOpenDeptTickets(ArrayList<Ticket> l)
+	{
+		int num = 0;
+		for(Ticket t : l)
+			if(t.getStatus())
+				num++;
+		return num;
+	}
+
+	private int getNumOfClosedDeptTickets(ArrayList<Ticket> l)
+	{
+		int num = 0;
+		for(Ticket t : l)
+			if(!t.getStatus())
+				num++;
+		return num;
 	}
 }

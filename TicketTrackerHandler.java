@@ -100,6 +100,6 @@ public class TicketTrackerHandler
 					break;
 			}
 		}while(!quit);
-		//tt.saveToFile();
+		tt.saveToFile();
 	}
 }

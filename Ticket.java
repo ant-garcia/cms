@@ -8,6 +8,15 @@ public class Ticket
 
 	public Ticket(){}
 
+	public Ticket(int i, boolean o, String info, String dept, String t)
+	{
+		this.id = i;
+		this.isOpen = o;
+		this.information = info;
+		this.department = dept;
+		this.timeCreated = t;
+	}
+
 	public Ticket(int i, String info, String dept, String t)
 	{
 		this.id = i;
@@ -16,6 +25,8 @@ public class Ticket
 		this.isOpen = true;
 		this.timeCreated = t;
 	}
+
+	
 
 	public void setId(int i)
 	{

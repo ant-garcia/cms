@@ -14,7 +14,7 @@ public class TimeClockHandler
 		int choice;
 		int id;
 		String dept = "";
-		String status = "";
+		String title = "";
 		boolean quit = false;
 		System.out.println("Welcome to the Time Clock!");
 		
@@ -44,8 +44,8 @@ public class TimeClockHandler
 									   "What is the Employee's Id?");
 					id = s.nextInt();
 					s.nextLine();
-					System.out.println("What is the Employee's status?");
-					status = s.nextLine();
+					System.out.println("What is the Employee's title?");
+					title = s.nextLine();
 					System.out.println("What is the Employee's department?");
 					dept = s.nextLine();
 					tc.addEmp(id, status, dept);

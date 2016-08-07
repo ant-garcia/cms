@@ -4,7 +4,8 @@ public class CMS
 {
 	private TimeClockHandler tch;
 	private TicketTrackerHandler tth;
-	
+	private PaymentHandler ph;
+
 	public CMS()
 	{
 		load();
@@ -14,6 +15,7 @@ public class CMS
 	{
 		this.tch = new TimeClockHandler();
 		this.tth = new TicketTrackerHandler();
+		this.ph = new PaymentHandler();
 	}
 
 	public static void main(String[] args)
@@ -22,6 +24,7 @@ public class CMS
 		boolean option = false;
 		Scanner in = new Scanner(System.in);
 		CMS cms = new CMS();
+
 		System.out.println("Welcome to the Central Management System\n" +
 						   "What would you like to do?\n");
 		do
@@ -32,18 +35,16 @@ public class CMS
 			switch(choice)
 			{
 				case 0:
-					System.out.println("You have chosen to access the time clock");
+					System.out.println("You have chosen to access the Time Clock");
 					cms.tch.run(new Scanner(System.in));
 					break;
 				case 1:
 					System.out.println("You have chosen to access Payroll");
+					cms.ph.run(new Scanner(System.in));
 					break;
 				case 2:
 					System.out.println("You have chosen to access Ticket Support");
 					cms.tth.run(new Scanner(System.in));
-					break;
-				case 3:
-					System.out.println("You have chosen to access Company/Customer Support");
 					break;
 				case -1:
 					System.out.println("GoodBye!");

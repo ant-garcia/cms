@@ -1,4 +1,5 @@
-import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,10 +12,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
-/*import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;*/
-
 public class JsonHandler
 {
 
@@ -26,6 +23,44 @@ public class JsonHandler
 			GsonBuilder gb = new GsonBuilder();
 			Gson gson = gb.serializeNulls().create();
 			out.write(gson.toJson(dLists));
+			out.flush();
+			System.out.println("JSON to File creation was a success!");
+			out.close();	
+		}catch(IOException ioe)
+		{
+			System.out.println("ERROR: Backup file creation failure");
+			return false;
+		}
+		return true;
+	}
+
+	public boolean createBackup(HashMap<String, ArrayList<Ticket>> m, String s)
+	{
+		try
+		{
+			FileWriter out = new FileWriter(s + ".json");
+			GsonBuilder gb = new GsonBuilder();
+			Gson gson = gb.serializeNulls().create();
+			out.write(gson.toJson(m));
+			out.flush();
+			System.out.println("JSON to File creation was a success!");
+			out.close();	
+		}catch(IOException ioe)
+		{
+			System.out.println("ERROR: Backup file creation failure");
+			return false;
+		}
+		return true;
+	}
+
+	public boolean createPayrollBackup(HashMap<String, Double> m, String s)
+	{
+		try
+		{
+			FileWriter out = new FileWriter(s + ".json");
+			GsonBuilder gb = new GsonBuilder();
+			Gson gson = gb.serializeNulls().create();
+			out.write(gson.toJson(m));
 			out.flush();
 			System.out.println("JSON to File creation was a success!");
 			out.close();	
@@ -66,34 +101,45 @@ public class JsonHandler
 		return true;
 	}
 
-	/*public boolean test(ArrayList<DeptList> dLists)
+	public HashMap<String, ArrayList<Ticket>> loadBackup()
 	{
+		JsonElement je = null;
 		try
 		{
 			ArrayList<JsonObject> list = new ArrayList<JsonObject>();
 			GsonBuilder gb = new GsonBuilder();
 			Gson gson = gb.serializeNulls().create();
-			JsonReader reader = new JsonReader(new FileReader("Depts.json"));
-			reader.beginArray();
+			JsonReader reader = new JsonReader(new FileReader("Tickets.json"));
 			reader.setLenient(true);
-			while(reader.hasNext())
-			{
-				JsonElement je = gson.fromJson(reader, JsonElement.class);
-				list.add(je.getAsJsonObject());
-			}
+			je = gson.fromJson(reader, JsonElement.class);	
 			reader.close();
-			for(JsonObject j : list)
-			{
-				dLists.add(parseJsonObject(j));
-			}
-			System.out.println("Success: Backup file was able to be loaded!");
 		}catch(IOException ioe)
 		{
 			System.out.println("ERROR: Backup file was not able to be loaded");
-			return false;
+			return null;
 		}
-		return true;
-	}*/
+		return parseTicketJsonObject(je.getAsJsonObject());
+	}
+
+	public HashMap<String, Double> loadPayrollBackup()
+	{
+		JsonElement je = null;
+		try
+		{
+			ArrayList<JsonObject> list = new ArrayList<JsonObject>();
+			GsonBuilder gb = new GsonBuilder();
+			Gson gson = gb.serializeNulls().create();
+			JsonReader reader = new JsonReader(new FileReader("Payroll.json"));
+			reader.setLenient(true);
+			je = gson.fromJson(reader, JsonElement.class);	
+			reader.close();
+		}catch(IOException ioe)
+		{
+			System.out.println("ERROR: Backup file was not able to be loaded");
+			return null;
+		}
+		return parsePayrollJsonObject(je.getAsJsonObject());
+	}
 
 	public DeptList parseJsonObject(JsonObject jo)
 	{
@@ -101,7 +147,9 @@ public class JsonHandler
 		JsonArray ja = jo.getAsJsonArray("empList");
 		for(int i = 0; i < ja.size(); i++)
 			dl.addEmp(new Employee(ja.get(i).getAsJsonObject().get("id").getAsInt(),
-								   ja.get(i).getAsJsonObject().get("status").getAsString(),
+								   ja.get(i).getAsJsonObject().get("timeOff").getAsDouble(),
+								   ja.get(i).getAsJsonObject().get("hrsWorked").getAsDouble(),
+								   ja.get(i).getAsJsonObject().get("title").getAsString(),
 								   ja.get(i).getAsJsonObject().get("dateStarted").getAsString(),
 								   ja.get(i).getAsJsonObject().get("dateEnded").getAsString(),
 								   ja.get(i).getAsJsonObject().get("lastPunchIn").getAsString(),
@@ -110,108 +158,30 @@ public class JsonHandler
 		return dl;
 	}
 
-	/*public JSONObject getAllJSONObjects(ArrayList<DeptList> dLists)
+	public HashMap<String, ArrayList<Ticket>> parseTicketJsonObject(JsonObject jo)
 	{
-		JSONObject company = new JSONObject();
-		JSONObject dept = new JSONObject();
-		company.put("list", "?!");
-		for(DeptList l : dLists)
+		HashMap<String, ArrayList<Ticket>> m = new HashMap<String, ArrayList<Ticket>>();
+		for(Map.Entry<String, JsonElement> v : jo.entrySet())
 		{
-			dept.put("Name", l.getName());
-			dept.put("Employees", parseEmployeeList(l.getEmpList()));
-		}
-		company.put("Depts", dept);
-		return company;
-	}*/
-
-	/*public JSONObject getJSONObject(DeptList l)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("Name", l.getName());
-		obj.put(l.getName() + " list", parseEmployeeList(l));
-		return obj;
-	}
-
-	private JSONArray parseEmployeeList(DeptList l)
-	{
-		JSONArray list = new JSONArray();
-		for(Employee e : l.getEmpList())
-			list.add(parseEmployee(e));
-		return list;
-	}
-
-	private JSONObject parseEmployee(Employee e)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("Id", e.getId());
-		obj.put("Status", e.getStatus());
-		obj.put("Department", e.getDepartment());
-		obj.put("DOE", e.getDateStarted());
-		obj.put("DOT", e.getDateEnded());
-		obj.put("LPI", e.getLastPunchIn());
-		obj.put("LPO", e.getLastPunchOut());
-		return obj;
-	}
-
-	public boolean createBackupFile(JSONObject obj, String s)
-	{
-		try
-		{
-			FileWriter out = new FileWriter(s + ".txt");
-			out.write(obj.toJSONString());
-			System.out.println("JSON to File creation was a success!");
-			System.out.println("\nJSON OBJECT: " + obj);
-			out.flush();
-			out.close();	
-		}catch(IOException ioe)
-		{
-			System.out.println("ERROR: Backup file creation failure");
-			return false;
-		}
-		return true;
-	}
-
-	public DeptList loadJSONFile(DeptList l, String s)
-	{
-		JSONParser parser = new JSONParser();
-		try
-		{
-			Object o = parser.parse(new FileReader("DeptList.txt"));
-			JSONObject jo = (JSONObject) o;
-
-			DeptList l = new DeptList(jo.getString("Name"));
-			JSONArray list = (JSONArray) jo.get(jo.get("Name") + " list");
-			//for(JSONArray ja : jo.getJSONArray(jo.getString("Name") + " list"))
-			for(Object d : list)
+			ArrayList<Ticket> l = new ArrayList<Ticket>();
+			for(JsonElement e : v.getValue().getAsJsonArray())
 			{
-				l.addEmp(new Employee(d.get("Id"), d.get("Status"), d.get("Department"),
-									  d.get("DOE"), d.get("DOT"), d.get("LPI"), d.get("LPO")));
+				l.add(new Ticket(e.getAsJsonObject().get("id").getAsInt(),
+								 e.getAsJsonObject().get("isOpen").getAsBoolean(),
+				 				 e.getAsJsonObject().get("information").getAsString(), 
+				 				 e.getAsJsonObject().get("department").getAsString(),
+				 				 e.getAsJsonObject().get("timeCreated").getAsString()));
 			}
-		}catch(IOException ioe)
-		{
-			System.out.println("ERROR: Backup file was not able to be loaded");
+			m.put(v.getKey(), l);
 		}
-	}*/
+		return m;
+	}
 
-	/*public File createJSONFile(JSONObject objs[])
+	public HashMap<String, Double> parsePayrollJsonObject(JsonObject jo)
 	{
-		File f = null;
-		FileWriter fw = null;
-		try
-		{
-			f = new File("pages.json");
-			fw = new FileWriter(f);
-			for(JSONObject obj : objs)
-				fw.write(obj.toJSONString());
-			fw.flush();
-			fw.close();	
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		return f;
-	}*/
-
+		HashMap<String, Double> m = new HashMap<String, Double>();
+		for(Map.Entry<String, JsonElement> v : jo.entrySet())
+			m.put(v.getKey(), v.getValue().getAsDouble());
+		return m;
+	}
 }

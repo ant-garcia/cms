@@ -3,10 +3,23 @@ import java.util.Date;
 public class TicketTracker
 {
 	private TicketManager tm;
+	private JsonHandler jh;
 
 	public TicketTracker()
 	{
 		tm = new TicketManager();
+		jh = new JsonHandler();
+		loadFromFile();
+	}
+
+	private void loadFromFile()
+	{
+		tm.setAllTickets(jh.loadBackup());
+	}
+
+	public void saveToFile()
+	{
+		jh.createBackup(tm.getAllTickets(), "Tickets");
 	}
 
 	public String getCurrentTime()
