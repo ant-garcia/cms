@@ -1,1 +1,0 @@
-{"Clerical list":[{"Status":"full-time","Department":"Clerical","LPI":null,"DOT":null,"LPO":null,"Id":1,"DOE":Fri Jul 29 16:02:55 EDT 2016}],"Name":"Clerical"}
